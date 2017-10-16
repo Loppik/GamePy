@@ -1,0 +1,9 @@
+class Consts:
+    SCREEN_WIDTH = 1000
+    SCREEN_HEIGHT = 800
+
+
+    UP_DIRECTION = 0
+    RIGHT_DIRECTION = 1
+    DOWN_DIRECTION = 2
+    LEFT_DIRECTION = 3
