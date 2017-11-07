@@ -1,26 +1,26 @@
 class Container:
     def __init__(self, ar):
-        self.array = ar
+        self.__array = ar
 
     def getElement(self, index):
-        return self.array[index]
+        return self.__array[index]
 
     def getElements(self):
-        return self.array
+        return self.__array
 
     def addElement(self, element):
-        self.array.append(element)
+        self.__array.append(element)
 
     def addElements(self, container):
         for element in container:
             self.addElement(element)
 
     def insertElement(self, index, element):
-        self.array.insert(index, element)
+        self.__array.insert(index, element)
 
     def setElement(self, index, element):
-        self.array[index] = element
+        self.__array[index] = element
 
     def removeElement(self, index):
-        self.array.pop(index)
+        self.__array.pop(index)
 

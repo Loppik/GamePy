@@ -1,9 +1,9 @@
 class Characteristics:
     def __init__(self, health, attack, defense, initiative):
-        self.health = health
-        self.attack = attack
-        self.defense = defense
-        self.initiative = initiative
+        self.__health = health
+        self.__attack = attack
+        self.__defense = defense
+        self.__initiative = initiative
 
     @property
     def health(self):
