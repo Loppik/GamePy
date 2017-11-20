@@ -31,21 +31,26 @@ class Field:
         cellNumber = 0
         for yCoordinate in range(lineNumber):
             for xCoordinate in range(columnNumber):
-                mapContainerCellsCoordinates.addItem(cellNumber, [arCellsPos[xCoordinate], arCellsPos[yCoordinate]])
+                mapContainerCellsCoordinates.addItem(cellNumber, Container([arCellsPos[xCoordinate], arCellsPos[yCoordinate]]))
                 cellNumber += 1
         return mapContainerCellsCoordinates
 
 
-    def renderCells(self, mapContainerCellsCoordinates):
-        for cellNumber in mapContainerCellsCoordinates.getKeys():
-            cell = Cell(self.__cellImage, mapContainerCellsCoordinates.getValue(cellNumber)[0], mapContainerCellsCoordinates.getValue(cellNumber)[1])
+    def renderCells(self):
+        for cell in self.cells.getElements():
             cell.renderCell(self.__screen)
-            self.__cells.addElement(cell)
+
 
     def renderActiveCells(self, activeCells):
         for cell in activeCells.getElements():
-            cell = Cell(self.__activeCellImage, cell.xCoordinate, cell.yCoordinate)
+            cell = Cell(self.__activeCellImage, cell.position)
             cell.renderCell(self.__screen)
+
+    def createCells(self, mapContainerCellsCoordinates):
+        for cellNumber in mapContainerCellsCoordinates.getKeys():
+            cell = Cell(self.__cellImage, Container([mapContainerCellsCoordinates.getValue(cellNumber).getElement(0), mapContainerCellsCoordinates.getValue(cellNumber).getElement(1)]))
+            cell.cellNumber = cellNumber
+            self.__cells.addElement(cell)
 
 
     @property
@@ -68,7 +73,7 @@ class Field:
     def activeCellImage(self):
         return self.__activeCellImage
 
-    activeCellImage.setter
+    @activeCellImage.setter
     def activeCellImage(self, image):
         self.__activeCellImage = image
 

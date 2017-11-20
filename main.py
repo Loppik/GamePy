@@ -1,14 +1,20 @@
-import pygame, sys
-from consts import Consts
-from creatures.ElvenArcher import ElvenArcher
-from logic.MapContainer import *
+import pygame
+
 from Field import *
 from Hero import Hero
 from Walks import Walks
-from EventFieldClick import EventFieldClick
+from consts import Consts
+from creatures.ElvenArcher import ElvenArcher
+from events.EventFieldClick import EventFieldClick
+from events.EventShoot import EventShoot
+from events.EventMouseMotion import EventMouseMotion
+
+
+from creatures import Creature
 
 cell = pygame.image.load("cell2.png")
 activeCell = pygame.image.load("activeCell.jpg")
+attackCell = pygame.image.load("attackCell.jpg")
 
 
 class Main:
@@ -17,45 +23,90 @@ class Main:
         self.wasWalk = True
         self.screen = screen
         self.working = True
+        self.creatures = []
+        self.shiftToNewCell = 0
         self.field = Field(screen, cell, activeCell)
         self.mainLoop()
+
+    def texts(self, score):
+        font = pygame.font.Font(None, 30)
+        scoretext = font.render("Score:" + str(score), 1, (255, 255, 255))
+        screen.blit(scoretext, (500, 457))
 
     def renderPassiveCells(self):
         pygame.display.flip()
         screen.fill((255, 255, 255))
 
-        mapContainerCellsCoordinates = Walks.mapContainerCellsCoordinates
-        self.field.renderCells(mapContainerCellsCoordinates)
-
+        self.field.renderCells()
 
     def renderActiveCells(self, activeCells):
         self.field.renderActiveCells(activeCells)
 
-    def events(self, event):
-        # for event in pygame.event.get():
+    def createCells(self):
+        mapContainerCellsCoordinates = Walks.mapContainerCellsCoordinates
+        self.field.createCells(mapContainerCellsCoordinates)
+
+    def mouseMotionEvent(self, event):
+        if event.type == pygame.MOUSEMOTION:
+            mousePosition = pygame.mouse.get_pos()
+            creatureOnWhichMoveCursor = EventFieldClick.creatureOnWhichMouseCursor(self.field.creatures, mousePosition)
+            if creatureOnWhichMoveCursor :
+                if not EventFieldClick.checkOnCompareTwoCreatures(creatureOnWhichMoveCursor, self.walkNow):
+                    attackSide = EventMouseMotion.identifyAttackSide(creatureOnWhichMoveCursor.getXcoordinate(), creatureOnWhichMoveCursor.getYcoordinate(), mousePosition)
+                    shiftToNewCell = EventMouseMotion.identifyShiftToNewCell(attackSide)
+                    newCellNumber = shiftToNewCell + creatureOnWhichMoveCursor.cellNumber
+
+                    # self.field.cells.getElement(creatureOnWhichMoveCursor.cellNumber + shiftToNewCell).cellBackground = attackCell
+                    # self.field.cells.getElement(creatureOnWhichMoveCursor.cellNumber + shiftToNewCell).model = attackCell.get_rect(topleft=self.field.cells.getElement(creatureOnWhichMoveCursor.cellNumber + shiftToNewCell).position.getElements())
+                    # self.shiftToNewCell = shiftToNewCell
+                    # self.renderActiveCells(self.walkNow.cellsOnWhichCanMove)
+                    # self.renderPassiveCells()
+                    if Walks.identifyCoordinatesByCellNumber(newCellNumber):
+                        cell = Cell(attackCell, Container([Walks.identifyCoordinatesByCellNumber(newCellNumber).getElement(0),Walks.identifyCoordinatesByCellNumber(newCellNumber).getElement(1)]))
+                        cell.cellNumber = newCellNumber
+
+                        # Render all
+                        self.renderActiveCells(self.walkNow.cellsOnWhichCanMove)
+                        cell.renderCell(self.screen)
+                        self.creatures[0].render(self.screen, Consts.RIGHT_DIRECTION)
+                        self.creatures[1].render(self.screen, Consts.DOWN_DIRECTION)
+                        self.renderPassiveCells()
+                    else:
+                        pass
+
+
+    def mousePressEvent(self, event):
+        #for event in pygame.event.get():
         if event.type == pygame.QUIT:
             self.working = False
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             mousePosition = pygame.mouse.get_pos()
 
-            creature = EventFieldClick.creatureOnWhichClick(self.field.creatures, mousePosition)
-            if (creature):
-                if (EventFieldClick.checkClickOnCreatureWhichWalksNow(creature, self.walkNow)):
-                    self.wasWalk = False
-                else:
-                    print("Shoot " + creature.name + "!!!")
+            self.wasWalk = False
+            creatureOnWhichClick = EventFieldClick.creatureOnWhichMouseCursor(self.field.creatures, mousePosition)
+            if creatureOnWhichClick:
+                if not EventFieldClick.checkOnCompareTwoCreatures(creatureOnWhichClick, self.walkNow):
+                    #asdasd
+                    self.walkNow.cellNumber = creatureOnWhichClick.cellNumber + self.shiftToNewCell
+                    self.walkNow.position = Walks.identifyCoordinatesByCellNumber(self.walkNow.cellNumber)
+                    #asdasd
+                    EventShoot.shoot(self.walkNow, creatureOnWhichClick)
                     self.wasWalk = True
-            else:
-                cell = EventFieldClick.cellOnWhichClick(self.field.cells, mousePosition)
+                    return
+
+            cell = EventFieldClick.cellOnWhichClick(self.field.cells, mousePosition)
+            if cell and Walks.checkCellOnExistenceInContainer(cell, self.walkNow.cellsOnWhichCanMove):
                 EventFieldClick.moveCreatureInOtherPos(self.field, self.walkNow, cell)
                 self.wasWalk = True
 
-    @staticmethod
-    def waitMousePress():
+
+    def waitMousePress(self):
         event = 0
         while (1):
             event = pygame.event.wait()
+            if event.type == pygame.MOUSEMOTION:
+                self.mouseMotionEvent(event)
             if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.QUIT:
                 break
         return event
@@ -66,9 +117,15 @@ class Main:
         hero.addCreature(creature)
 
     def mainLoop(self):
+        # Create cells
+        self.createCells()
+
         # Creature units
-        elf = ElvenArcher("Archer", 0, 5, 5, 5, 5, 5, Consts.WALK_3_CELL)
-        elf2 = ElvenArcher("Archer2", 11, 5, 5, 5, 5, 5, Consts.WALK_3_CELL)
+        elf = ElvenArcher("Archer1", Container([0,0]), 3, 200, 90, 5, 5, 5, Consts.WALK_3_CELL)
+        elf.cellNumber = Walks.identifyCellByCoordinates(elf.getXcoordinate(), elf.getYcoordinate(), self.field.cells).cellNumber
+        elf2 = ElvenArcher("Archer2", Container([770,0]), 7, 60, 60, 5, 5, 5, Consts.WALK_3_CELL)
+        elf2.cellNumber = Walks.identifyCellByCoordinates(elf2.getXcoordinate(), elf2.getYcoordinate(), self.field.cells).cellNumber
+        print(elf2.cellNumber)
         self.field.creatures.addElement(elf)
         self.field.creatures.addElement(elf2)
         player1 = Hero("Player1", [])
@@ -88,28 +145,30 @@ class Main:
 
         # Add creatures in memory of cells
         allCells = self.field.cells.getElements()
-        allCells[elf.position].creature = elf
-        allCells[elf2.position].creature = elf2
+        allCells[elf.cellNumber].creature = elf
+        allCells[elf2.cellNumber].creature = elf2
+
+        self.creatures = [elf, elf2]
 
         while self.working:
             if self.wasWalk:
                 self.walkNow = sequence[index]
 
-            cellsOnWhichCreatureCanMove = Walks.identifyCellsOnWhichCreatureCanMove(self.walkNow, self.field.cells)
+            cellsOnWhichCreatureCanMove = Walks.identifyCellsOnWhichCreatureCanMove(self.walkNow, self.walkNow.getCorrectionCoefs(), self.field.cells)
             self.renderActiveCells(cellsOnWhichCreatureCanMove)
-
+            self.walkNow.cellsOnWhichCanMove = cellsOnWhichCreatureCanMove
             elf.render(self.screen, Consts.RIGHT_DIRECTION)
             elf2.render(self.screen, Consts.DOWN_DIRECTION)
             self.renderPassiveCells()
 
-
             event = self.waitMousePress()
-            self.events(event)
+            self.mousePressEvent(event)
             if index == len(sequence) - 1 and self.wasWalk:
                 index = 0
             else:
                 if self.wasWalk:
                     index += 1
+
 
 
 pygame.init()

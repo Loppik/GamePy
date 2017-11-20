@@ -5,24 +5,27 @@ class EventFieldClick:
     # Click on cell
     @staticmethod
     def cellOnWhichClick(cells, mousePosition):
-        cell = 0
+        check = True
         for cell in cells.getElements():
             if cell.model.collidepoint(mousePosition):
+                check = False
                 break
+
+        if check:
+            cell = 0
 
         return cell
 
     @staticmethod
     def moveCreatureInOtherPos(field, walkNow, cellOnWhichMove):
-        print(cellOnWhichMove.yCoordinate)
         field.setCreatureInCell(cellOnWhichMove, walkNow)
-        walkNow.position = Walks.identifyCellNumber(cellOnWhichMove)
-        print(walkNow.position)
+        walkNow.position = cellOnWhichMove.position
+        walkNow.cellNumber = cellOnWhichMove.cellNumber
         cellOnWhichMove.creature = walkNow
 
     # Click on creature
     @staticmethod
-    def creatureOnWhichClick(creatures, mousePosition):
+    def creatureOnWhichMouseCursor(creatures, mousePosition):
         creature = 0
         check = True
         for creature in creatures.getElements():
@@ -35,7 +38,7 @@ class EventFieldClick:
         return creature
 
     @staticmethod
-    def checkClickOnCreatureWhichWalksNow(creatureOnWhichClick, walkNow):
+    def checkOnCompareTwoCreatures(creatureOnWhichClick, walkNow):
         res = False
         if creatureOnWhichClick == walkNow:
             res = True

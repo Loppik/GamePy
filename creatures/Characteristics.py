@@ -1,9 +1,19 @@
 class Characteristics:
-    def __init__(self, health, attack, defense, initiative):
-        self.__health = health
+    def __init__(self, amount, fullHealth, attack, defense, initiative):
+        self.__amount = amount
+        self.__health = fullHealth
+        self.__fullHealth = fullHealth
         self.__attack = attack
         self.__defense = defense
         self.__initiative = initiative
+
+    @property
+    def amount(self):
+        return self.__amount
+
+    @amount.setter
+    def amount(self, amount):
+        self.__amount = amount
 
     @property
     def health(self):
@@ -12,6 +22,10 @@ class Characteristics:
     @health.setter
     def health(self, health):
         self.__health = health
+
+    @property
+    def fullHealth(self):
+        return self.__fullHealth
 
     @property
     def attack(self):

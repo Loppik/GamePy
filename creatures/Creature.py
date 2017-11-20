@@ -1,25 +1,51 @@
+import pygame
+
 from creatures.Characteristics import *
 from logic.Container import Container
+from Walks import Walks
+from creatures.FieldObject import FieldObject
 
-class Creature:
-    def __init__(self, name, position, health, attack, defense, initiative):
+class Creature(FieldObject):
+    def __init__(self, name, position, amount, fullHealth, attack, defense, initiative):
+        FieldObject.__init__(self, position, None)
         self.__name = name
-        self.__characterisitcs = Characteristics(health, attack, defense, initiative)
-        self.__position = position
-        self.__model = 0
-        self.__hero = 0
+        self.__characterisitcs = Characteristics(amount, fullHealth, attack, defense, initiative)
+        self.__hero = None
         self.__walkArea = Container([])
+        self.__cellsOnWhichCanMove = None
 
     def getCorrectionCoefs(self):
         return self.__walkArea.getElements()
+
+
+    def renderAmountCreatures(creature, screen):
+        font = pygame.font.Font(None, 30)
+        scoretext = font.render(str(creature.amount), 1, (255, 0, 0))
+        screen.blit(scoretext, (creature.getXcoordinate()+50, creature.getYcoordinate()+50))
 
     @property
     def name(self):
         return self.__name
 
     @property
+    def amount(self):
+        return self.__characterisitcs.amount
+
+    @amount.setter
+    def amount(self, amount):
+        self.__characterisitcs.amount = amount
+
+    @property
     def health(self):
         return self.__characterisitcs.health
+
+    @health.setter
+    def health(self, health):
+        self.__characterisitcs.health = health
+
+    @property
+    def fullHealth(self):
+        return self.__characterisitcs.fullHealth
 
     @property
     def attack(self):
@@ -37,21 +63,6 @@ class Creature:
     def initiative(self, initiative):
         self.__characterisitcs.initiative = initiative
 
-    @property
-    def position(self):
-        return self.__position
-
-    @position.setter
-    def position(self, position):
-        self.__position = position
-
-    @property
-    def model(self):
-        return self.__model
-
-    @model.setter
-    def model(self, model):
-        self.__model = model
 
     @property
     def hero(self):
@@ -68,3 +79,11 @@ class Creature:
     @walkArea.setter
     def walkArea(self, walkArea):
         self.__walkArea = walkArea
+
+    @property
+    def cellsOnWhichCanMove(self):
+        return self.__cellsOnWhichCanMove
+
+    @cellsOnWhichCanMove.setter
+    def cellsOnWhichCanMove(self, cells):
+        self.__cellsOnWhichCanMove = cells

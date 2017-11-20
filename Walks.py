@@ -1,10 +1,20 @@
+from math import ceil
+
 from Field import *
 
 arCellsPos = [0, 70, 140, 210, 280, 350, 420, 490, 560, 630, 700, 770, 840]
 
 class Walks:
-    mapContainerCellsCoordinates = Field.createCellCoordinates(arCellsPos, 10, 12)
+    mapContainerCellsCoordinates = Field.createCellCoordinates(arCellsPos, 8, 12)
 
+    @staticmethod
+    def checkCellOnExistenceInContainer(cell, cellsCon):
+        res = False
+        for c in cellsCon.getElements():
+            if c == cell:
+                res = True
+                break
+        return res
 
     @staticmethod
     def setCellCreaturesLocationOnIt(cell, creature):
@@ -19,7 +29,8 @@ class Walks:
     def identifyCellByCoordinates(xCoordinate, yCoordinate, cells):
         check = True
         for cell in cells.getElements():
-            if cell.xCoordinate == xCoordinate and cell.yCoordinate == yCoordinate:
+            #print(str(cell.getXcoordinate()) + '-' + str(cell.getYcoordinate()))
+            if cell.getXcoordinate() == xCoordinate and cell.getYcoordinate() == yCoordinate:
                 check = False
                 break
 
@@ -28,29 +39,12 @@ class Walks:
         return cell
 
 
-    @staticmethod
-    def identifyCellNumber(cell):
-        xCoordinat = 0
-        yCoordinat = 0
-        cellNumber = 0
-        print(cell.xCoordinate)
-        print(cell.xCoordinate)
-        for cellNumber in range(120):
-            if arCellsPos[xCoordinat] == cell.xCoordinate and arCellsPos[yCoordinat] == cell.yCoordinate:
-                break
-            if cellNumber % 12 == 0 and cellNumber != 0:
-                xCoordinat = 0
-                yCoordinat += 1
-
-            xCoordinat += 1
-        return cellNumber
 
     @staticmethod
-    def identifyCellsOnWhichCreatureCanMove(creature, cellsOnField):
+    def identifyCellsOnWhichCreatureCanMove(creature, coefs, cellsOnField):
         cellsOnWhichCreatureCanMove = Container([])
-        for correctionCoef in creature.getCorrectionCoefs():
-            xCoordinate, yCoordinate = Walks.identifyCoordinatesByCellNumber(creature.position)
-            cell = Walks.identifyCellByCoordinates(xCoordinate + correctionCoef.getElement(0), yCoordinate + correctionCoef.getElement(1), cellsOnField)
+        for correctionCoef in coefs:
+            cell = Walks.identifyCellByCoordinates(creature.getXcoordinate() + correctionCoef.getElement(0), creature.getYcoordinate() + correctionCoef.getElement(1), cellsOnField)
             if cell != 0:
                 cellsOnWhichCreatureCanMove.addElement(cell)
 
