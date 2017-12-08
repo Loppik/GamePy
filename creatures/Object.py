@@ -3,11 +3,19 @@ class Object:
         self.__position = position
         self.__model = model
 
+
+
     def getXcoordinate(self):
         return self.__position.getElement(0)
 
     def getYcoordinate(self):
         return self.__position.getElement(1)
+
+    def setXcoordinate(self, coordinate):
+        return self.__position.setElement(0, coordinate)
+
+    def setYcoordinate(self, coordinate):
+        return self.__position.setElement(1, coordinate)
 
     @property
     def position(self):

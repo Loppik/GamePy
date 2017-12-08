@@ -50,3 +50,17 @@ class Walks:
 
         return cellsOnWhichCreatureCanMove
 
+    @staticmethod
+    def checkOnOpportunityToMove(attaker, prey, shiftCellNumber):
+        for cell in attaker.cellsOnWhichCanMove.getElements():
+            if shiftCellNumber + prey.cellNumber == cell.cellNumber and not Walks.endLine(prey, shiftCellNumber):
+                return True
+        return False
+
+    @staticmethod
+    def endLine(prey, shift):
+        if prey.cellNumber % 11 == 0 and (shift == 1 or shift == 13):
+            return True
+        return False
+
+

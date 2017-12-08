@@ -1,6 +1,7 @@
 from logic.MapContainer import *
 from logic.Container import *
 from Cell import *
+from consts import *
 
 class Field:
     def __init__(self, screen, cellImage, activeCellImage):
@@ -16,9 +17,6 @@ class Field:
 
     def getCreatureInCell(self, cellNumber):
         return Field.getCellInCells(self, cellNumber).creature
-
-    def setCreatureInCell(self, cell, creature):
-        cell.creature = creature
 
     def getModelInCell(self, cellNumber):
         return Field.getCellInCells(self, cellNumber).model
@@ -41,14 +39,9 @@ class Field:
             cell.renderCell(self.__screen)
 
 
-    def renderActiveCells(self, activeCells):
-        for cell in activeCells.getElements():
-            cell = Cell(self.__activeCellImage, cell.position)
-            cell.renderCell(self.__screen)
-
     def createCells(self, mapContainerCellsCoordinates):
         for cellNumber in mapContainerCellsCoordinates.getKeys():
-            cell = Cell(self.__cellImage, Container([mapContainerCellsCoordinates.getValue(cellNumber).getElement(0), mapContainerCellsCoordinates.getValue(cellNumber).getElement(1)]))
+            cell = Cell(self.__cellImage, Container([mapContainerCellsCoordinates.getValue(cellNumber).getElement(0), mapContainerCellsCoordinates.getValue(cellNumber).getElement(1)]), Consts.PASSIVE_CELL)
             cell.cellNumber = cellNumber
             self.__cells.addElement(cell)
 

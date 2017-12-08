@@ -43,3 +43,15 @@ class EventFieldClick:
         if creatureOnWhichClick == walkNow:
             res = True
         return res
+
+    @staticmethod
+    def objectInDownMenuWhichClick(objects, mousePosition):
+        check = True
+        for object in objects.getElements():
+            if object.getModel().collidepoint(mousePosition):
+                check = False
+                break
+        if check:
+            object = 0
+        return object
+

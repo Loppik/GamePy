@@ -8,6 +8,9 @@ class Container:
     def getElements(self):
         return self.__array
 
+    def setElement(self, index, element):
+        self.__array[index] = element
+
     def addElement(self, element):
         self.__array.append(element)
 
@@ -23,4 +26,7 @@ class Container:
 
     def removeElement(self, index):
         self.__array.pop(index)
+
+    def getSize(self):
+        return len(self.__array)
 

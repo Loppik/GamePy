@@ -15,8 +15,6 @@ class EventMouseMotion:
                 attackSide = i + 1
                 break
             i += 1
-        if attackSide == 0:
-            print(str(mousePosition[0]-770) + " - " + str(mousePosition[1]))
         # i = 1
         # for attackSide in Consts.ATTACK_CONTAINER.getElements():
         #     k = 0
