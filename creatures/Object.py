@@ -1,9 +1,10 @@
 class Object:
-    def __init__(self, position, model):
+    def __init__(self, position, background):
         self.__position = position
-        self.__model = model
+        self.__background = background
 
-
+    def render(self, screen):
+        pass
 
     def getXcoordinate(self):
         return self.__position.getElement(0)
@@ -17,6 +18,9 @@ class Object:
     def setYcoordinate(self, coordinate):
         return self.__position.setElement(1, coordinate)
 
+    def getModel(self):
+        return self.background.get_rect(topleft=self.position.getElements())
+
     @property
     def position(self):
         return self.__position
@@ -26,9 +30,10 @@ class Object:
         self.__position = position
 
     @property
-    def model(self):
-        return self.__model
+    def background(self):
+        return self.__background
 
-    @model.setter
-    def model(self, model):
-        self.__model = model
+    @background.setter
+    def background(self, background):
+        self.__background = background
+

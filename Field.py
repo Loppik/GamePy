@@ -1,7 +1,7 @@
 from logic.MapContainer import *
 from logic.Container import *
 from Cell import *
-from consts import *
+from Consts import *
 
 class Field:
     def __init__(self, screen, cellImage, activeCellImage):

@@ -29,7 +29,6 @@ class Walks:
     def identifyCellByCoordinates(xCoordinate, yCoordinate, cells):
         check = True
         for cell in cells.getElements():
-            #print(str(cell.getXcoordinate()) + '-' + str(cell.getYcoordinate()))
             if cell.getXcoordinate() == xCoordinate and cell.getYcoordinate() == yCoordinate:
                 check = False
                 break
@@ -39,7 +38,6 @@ class Walks:
         return cell
 
 
-
     @staticmethod
     def identifyCellsOnWhichCreatureCanMove(creature, coefs, cellsOnField):
         cellsOnWhichCreatureCanMove = Container([])
@@ -47,14 +45,16 @@ class Walks:
             cell = Walks.identifyCellByCoordinates(creature.getXcoordinate() + correctionCoef.getElement(0), creature.getYcoordinate() + correctionCoef.getElement(1), cellsOnField)
             if cell != 0:
                 cellsOnWhichCreatureCanMove.addElement(cell)
-
         return cellsOnWhichCreatureCanMove
 
     @staticmethod
     def checkOnOpportunityToMove(attaker, prey, shiftCellNumber):
         for cell in attaker.cellsOnWhichCanMove.getElements():
             if shiftCellNumber + prey.cellNumber == cell.cellNumber and not Walks.endLine(prey, shiftCellNumber):
-                return True
+                if cell.creature == None:
+                    return True
+        if shiftCellNumber + prey.cellNumber == attaker.cellNumber and not Walks.endLine(prey, shiftCellNumber):
+            return True
         return False
 
     @staticmethod
@@ -62,5 +62,12 @@ class Walks:
         if prey.cellNumber % 11 == 0 and (shift == 1 or shift == 13):
             return True
         return False
+
+    @staticmethod
+    def checkOnDifTeam(walkNow, creature):
+        if walkNow.hero == creature.hero:
+            return False
+        return True
+
 
 

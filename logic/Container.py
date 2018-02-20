@@ -2,6 +2,9 @@ class Container:
     def __init__(self, ar):
         self.__array = ar
 
+    def getWithoutRelations(self):
+        return self.__array[:]
+
     def getElement(self, index):
         return self.__array[index]
 
@@ -26,6 +29,9 @@ class Container:
 
     def removeElement(self, index):
         self.__array.pop(index)
+
+    def remove(self, element):
+        self.__array.remove(element)
 
     def getSize(self):
         return len(self.__array)

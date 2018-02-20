@@ -2,34 +2,26 @@ from creatures.FieldObject import FieldObject
 import pygame
 
 class Cell(FieldObject):
-    passiveCell = pygame.image.load("cell2.png")
-    activeCell = pygame.image.load("activeCell.jpg")
-    moveCell = pygame.image.load("attackCell.jpg")
+    passiveCell = pygame.image.load("images/passiveCell.png")
+    activeCell = pygame.image.load("images/activeCell.png")
+    moveCell = pygame.image.load("images/attackCell.png")
 
     def __init__(self, cellBackground, position, status):
-        FieldObject.__init__(self, position, cellBackground.get_rect(topleft=position.getElements()))
-        self.__cellBackground = cellBackground
+        FieldObject.__init__(self, position, cellBackground)
         self.__status = status
         self.__creature = None
 
     def renderCell(self, screen):
-        screen.blit(self.__cellBackground, self.model)
+        screen.blit(self.background, self.position.getElements())
 
     def updateBackground(self):
         if self.status == 1:
-            self.cellBackground = Cell.activeCell
+            self.background = Cell.activeCell
         elif self.status == 2:
-            self.cellBackground = Cell.passiveCell
+            self.background = Cell.passiveCell
         elif self.status == 3:
-            self.cellBackground = Cell.moveCell
+            self.background = Cell.moveCell
 
-    @property
-    def cellBackground(self):
-        return self.__cellBackground
-
-    @cellBackground.setter
-    def cellBackground(self, background):
-        self.__cellBackground = background
 
     @property
     def status(self):

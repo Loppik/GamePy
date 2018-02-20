@@ -1,8 +1,8 @@
 from creatures.Object import Object
 
 class FieldObject(Object):
-    def __init__(self, position, model):
-        Object.__init__(self, position, model)
+    def __init__(self, position, background):
+        Object.__init__(self, position, background)
         self.__cellNumber = None
 
     @property

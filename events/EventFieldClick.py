@@ -7,7 +7,7 @@ class EventFieldClick:
     def cellOnWhichClick(cells, mousePosition):
         check = True
         for cell in cells.getElements():
-            if cell.model.collidepoint(mousePosition):
+            if cell.getModel().collidepoint(mousePosition):
                 check = False
                 break
 
@@ -29,7 +29,7 @@ class EventFieldClick:
         creature = 0
         check = True
         for creature in creatures.getElements():
-            if creature.model.collidepoint(mousePosition):
+            if creature.getModel().collidepoint(mousePosition):
                 check = False
                 break
         if check:
@@ -37,12 +37,7 @@ class EventFieldClick:
 
         return creature
 
-    @staticmethod
-    def checkOnCompareTwoCreatures(creatureOnWhichClick, walkNow):
-        res = False
-        if creatureOnWhichClick == walkNow:
-            res = True
-        return res
+
 
     @staticmethod
     def objectInDownMenuWhichClick(objects, mousePosition):

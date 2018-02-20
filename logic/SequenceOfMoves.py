@@ -1,11 +1,29 @@
 from logic.Container import *
-class SequanceOfMoves:
+from creatures.Object import Object
+import pygame
+
+class SequenceOfMoves(Object):
+    def __init__(self, position):
+        Object.__init__(self, position, pygame.image.load("images/waitButton.png"))
+        self.sequence = None
+        self.__lastCreature = None
+
+    def render(self, screen, walkNow):
+        font = pygame.font.Font(None, 30)
+        coef = 0
+        self.sequence.insertElement(0, walkNow)
+        for creature in self.sequence.getElements():
+            scoretext = font.render(creature.name, 1, (0, 0, 0))
+            screen.blit(scoretext, (self.position.getElement(0) + coef, self.position.getElement(1)))
+            coef += 120
+        self.sequence.removeElement(0)
+
     @staticmethod
     def sortForInitiative(containerOfCreaturesPlayer1, containerOfCreaturesPlayer2):
         containerOfCreaturesBothPlayers = Container(containerOfCreaturesPlayer1)
         containerOfCreaturesBothPlayers.addElements(containerOfCreaturesPlayer2)
 
-        SequanceOfMoves.sortContainerForValue(containerOfCreaturesBothPlayers)
+        SequenceOfMoves.sortContainerForValue(containerOfCreaturesBothPlayers)
         return containerOfCreaturesBothPlayers
 
     @staticmethod
@@ -14,7 +32,7 @@ class SequanceOfMoves:
         while i < len(container.getElements()):
             j = i
             while j < len(container.getElements()):
-                if container.getElement(j).initiative > container.getElement(i).initiative:
+                if container.getElement(j).chanInitiat > container.getElement(i).chanInitiat:
                     term = container.getElement(j)
                     container.setElement(j, container.getElement(i))
                     container.setElement(i, term)
@@ -26,7 +44,7 @@ class SequanceOfMoves:
         remainders = []
         index = 0
         while index < len(creatures.getElements()):
-            remainders.append(SequanceOfMoves.findRemainderInitiativeElem(creatures.getElement(index)))
+            remainders.append(SequenceOfMoves.findRemainderInitiativeElem(creatures.getElement(index)))
             index += 1
 
         return remainders
@@ -35,38 +53,35 @@ class SequanceOfMoves:
     def initiativePlusFirstRemainders(creatures, remainders):
         i = 0
         for creature in creatures.getElements():
-            SequanceOfMoves.initiativePlusRemainder(creature, remainders[i])
+            SequenceOfMoves.initiativePlusRemainder(creature, remainders[i])
             i += 1
 
     @staticmethod
     def initiativePlusRemainder(creature, remainder):
-        creature.initiative = creature.initiative/10 + remainder
+        creature.chanInitiat = creature.chanInitiat/10 + remainder
 
     @staticmethod
     def createStartMoveLine(creatures):
-        remainders = SequanceOfMoves.findFirstRemaindersForAllCreatures(creatures)
-        SequanceOfMoves.initiativePlusFirstRemainders(creatures, remainders)
+        remainders = SequenceOfMoves.findFirstRemaindersForAllCreatures(creatures)
+        SequenceOfMoves.initiativePlusFirstRemainders(creatures, remainders)
 
-    @staticmethod
-    def determinateMove(containerCreaturesInMoveLine):
-        moveCreature = containerCreaturesInMoveLine.getElement(0)
-        remainder = moveCreature.initiative - 1
-        #print(remainder)
+
+    def determinateMove(self):
+        moveCreature = self.sequence.getElement(0)
+        remainder = moveCreature.chanInitiat - 1
         if remainder > 1:
-            moveCreature.initiative = remainder
-            SequanceOfMoves.insertValueForWane(containerCreaturesInMoveLine, moveCreature)
-            #print("+ " + containerCreaturesInMoveLine.getElement(0).name)
+            moveCreature.chanInitiat = remainder
+            SequenceOfMoves.insertValueForWane(self.sequence, moveCreature)
         else:
-            containerCreaturesInMoveLine.getElement(0).initiative = remainder
-            SequanceOfMoves.insertValueForWane(containerCreaturesInMoveLine, moveCreature)
+            self.sequence.getElement(0).chanInitiat = remainder
+            SequenceOfMoves.insertValueForWane(self.sequence, moveCreature)
 
-        #print(containerCreaturesInMoveLine.getElement(0).initiative)
-        containerCreaturesInMoveLine.removeElement(0)
+        self.sequence.removeElement(0)
         return moveCreature
 
     @staticmethod
     def findRemainderInitiativeElem(creature):
-        return creature.initiative/10 - 1
+        return creature.chanInitiat/10 - 1
 
 
     @staticmethod
@@ -75,7 +90,7 @@ class SequanceOfMoves:
         check = True
         while index < len(container.getElements()):
             elementIndex = container.getElement(index)
-            if element.initiative > elementIndex.initiative:
+            if element.chanInitiat > elementIndex.chanInitiat:
                 container.insertElement(index, element)
                 check = False
                 break
@@ -83,3 +98,20 @@ class SequanceOfMoves:
 
         if check:
             container.addElement(element)
+
+    def firstSequence(self, player1, player2):
+        self.sequence = SequenceOfMoves.sortForInitiative(player1.creatures.getWithoutRelations(), player2.creatures.getWithoutRelations())
+
+        SequenceOfMoves.createStartMoveLine(self.sequence)
+
+        lastCreature = self.sequence.getElement(self.sequence.getSize() - 1)
+        self.lastCreature = lastCreature
+
+
+    @property
+    def lastCreature(self):
+        return self.__lastCreature
+
+    @lastCreature.setter
+    def lastCreature(self, creature):
+        self.__lastCreature = creature

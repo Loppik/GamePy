@@ -24,7 +24,6 @@ class Spellbook(Button):
         pygame.display.update(self.openBackground.get_rect(topleft=(200,200)))
 
     def onClick(self, this):
-        print("Spell!!!")
         self.renderOpen(this)
         event = Spellbook.waitMousePress()
         mousePosition = pygame.mouse.get_pos()
@@ -42,7 +41,6 @@ class Spellbook(Button):
                 spell.position.setElement(0, spell.position.getElement(0) + 30)
                 this.update()
             this.objects.removeElement(3)
-            print("end")
             # this.objects.addElement(spell)
             # pygame.time.Clock().tick(100)
             pygame.display.flip()
